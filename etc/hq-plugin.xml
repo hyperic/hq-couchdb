@@ -26,7 +26,7 @@
  -->
 
 <plugin>
-   <!-- copy of pdk/plugins/process-metrics.xml -->
+   <!-- from pdk/plugins/process-metrics.xml -->
   <metrics name="process">
     <metric name="Process Virtual Memory Size"
             template="sigar:Type=ProcMem,Arg=%process.query%:Size"
@@ -101,5 +101,27 @@
             indicator="true"/>
 
     <metrics include="process"/>
+
+    <service name="Database">
+      <config>
+        <option name="name"
+                description="Database name"/>
+      </config>
+
+      <plugin type="collector"
+              class="org.hyperic.hq.plugin.couchdb.CouchDatabaseCollector"/>
+
+      <property name="template" value="couchdb:${sockaddr.config},name=%name%:${alias}"/>
+
+      <metric name="Availability" indicator="true"/>
+
+      <metric name="Disk Size" indicator="true" units="B"/>
+
+      <metric name="Document Count" indicator="true"/>
+
+      <metric name="Update Sequence" indicator="true"/>
+
+      <metric name="Deleted Document Count"/>
+    </service>
   </server>
 </plugin>
