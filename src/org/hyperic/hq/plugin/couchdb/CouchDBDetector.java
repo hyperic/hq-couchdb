@@ -29,12 +29,20 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.hyperic.hq.product.Collector;
 import org.hyperic.hq.product.DaemonDetector;
+import org.hyperic.hq.product.PluginException;
+import org.hyperic.hq.product.ServiceResource;
 import org.hyperic.hq.product.SigarMeasurementPlugin;
 import org.hyperic.sigar.NetFlags;
+import org.hyperic.util.config.ConfigResponse;
+
+import org.jcouchdb.db.Server;
+import org.jcouchdb.db.ServerImpl;
 
 public class CouchDBDetector extends DaemonDetector {
 
@@ -108,5 +116,25 @@ public class CouchDBDetector extends DaemonDetector {
         }
 
         return opts;
+    }
+
+    protected List<ServiceResource> discoverServices(ConfigResponse config)
+        throws PluginException {
+
+        List<ServiceResource> services = new ArrayList<ServiceResource>();
+        String hostname = config.getValue(Collector.PROP_HOSTNAME);
+        int port = Integer.valueOf(config.getValue(Collector.PROP_PORT));
+        Server server = new ServerImpl(hostname, port);
+
+        for (String dbname : server.listDatabases()) {
+            ServiceResource service = createServiceResource("Database");
+            ConfigResponse serviceConfig = new ConfigResponse();
+            serviceConfig.setValue(CouchDatabaseCollector.PROP_DBNAME, dbname);
+            service.setProductConfig(serviceConfig);
+            service.setMeasurementConfig();
+            service.setServiceName(dbname);
+            services.add(service);
+        }
+        return services;
     }
 }
