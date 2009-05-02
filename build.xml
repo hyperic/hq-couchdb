@@ -13,7 +13,8 @@
 
   <!-- Plugin interfaces and support classes -->
   <path id="plugin.classpath">
-    <fileset dir="${pdk.dir}/lib" includes="*.jar" excludes="log4j.jar"/>
+    <fileset dir="${pdk.dir}/lib" includes="*.jar"/>
+    <fileset dir="lib" includes="*.jar"/>
   </path>
 
   <!-- ${name}-plugin.jar packaging -->
@@ -29,7 +30,7 @@
     <javac destdir="${build.dir}/classes"
            optimize="off"
            debug="on"
-           source="1.4" target="1.4"
+           source="1.5" target="1.5"
            classpathref="plugin.classpath">
       <src>
         <path location="src"/>
