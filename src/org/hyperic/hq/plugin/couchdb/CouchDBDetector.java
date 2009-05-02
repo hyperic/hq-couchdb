@@ -34,8 +34,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.hyperic.hq.product.Collector;
+import org.hyperic.hq.product.ConfigFileTrackPlugin;
 import org.hyperic.hq.product.DaemonDetector;
 import org.hyperic.hq.product.PluginException;
+import org.hyperic.hq.product.ServerResource;
 import org.hyperic.hq.product.ServiceResource;
 import org.hyperic.hq.product.SigarMeasurementPlugin;
 import org.hyperic.sigar.NetFlags;
@@ -48,6 +50,7 @@ public class CouchDBDetector extends DaemonDetector {
 
     private static final String BIND_ADDRESS = "bindaddress";
     private static final String PROP_VERSION = "version";
+    private Map currentOptions;
 
     private void setOpt(Map opts, String opt, String val) {
         if (opts.containsKey(opt) || //set by process                                                         
@@ -58,9 +61,35 @@ public class CouchDBDetector extends DaemonDetector {
         opts.put(opt, val);
     }
 
+    //set log/config track options
+    //XXX super class should take care of this via getProcOpts()
+    protected ServerResource newServerResource(long pid, String exe) {
+        ServerResource server = super.newServerResource(pid, exe);
+        ConfigResponse config = server.getMeasurementConfig();
+        String[] options = {
+            ConfigFileTrackPlugin.PROP_FILES_SERVER,
+            CouchDBLogFileTrackPlugin.PROP_FILES_SERVER
+        };
+
+        for (String name : options) {
+            String opt = getTypeProperty(name + ".opt");
+            if (opt == null) {
+                continue;
+            }
+            String val = (String)this.currentOptions.get(opt);
+            if (val != null) {
+                config.setValue(name, val);
+            }
+        }
+
+        server.setMeasurementConfig(config);
+        return server;
+    }
+
     protected Map getProcOpts(long pid) {
         Map opts = super.getProcOpts(pid);
         String defaultPort = getTypeProperty(Collector.PROP_PORT);
+        this.currentOptions = opts;
 
         String home = (String)opts.get("-home");
         if (home != null) {

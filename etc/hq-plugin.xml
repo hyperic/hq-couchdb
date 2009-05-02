@@ -79,9 +79,17 @@
     <property name="PROC_QUERY"
               value="State.Name.sw=beam,Args.*.sw=couch_server:start()"/>
 
+    <property name="DEFAULT_CONFIG_FILE" value="/etc/couchdb/couch.ini"/>
+    <property name="DEFAULT_LOG_FILE" value="/var/log/couchdb/couch.log"/>
+
+    <!-- getProcOpts() -> config option mapping -->
     <property name="hostname.opt" value="bindaddress"/>
     <property name="port.opt" value="port"/>
     <property name="process.query.opt" value="process.query"/>
+    <property name="server.config_track.files.opt" value="-couchini"/>
+    <property name="server.log_track.files.opt" value="logfile"/>
+
+    <!-- default sockaddr.port -->
     <property name="port" value="5984"/>
 
     <config include="sockaddr">
@@ -100,6 +108,12 @@
 
     <plugin type="measurement"
             class="org.hyperic.hq.product.MeasurementPlugin"/>
+
+    <plugin type="config_track"
+            class="org.hyperic.hq.product.ConfigFileTrackPlugin"/>
+
+    <plugin type="log_track"
+            class="org.hyperic.hq.plugin.couchdb.CouchDBLogFileTrackPlugin"/>
 
     <metric name="Availability"
             template="sigar:Type=ProcState,Arg=%process.query%:State"
