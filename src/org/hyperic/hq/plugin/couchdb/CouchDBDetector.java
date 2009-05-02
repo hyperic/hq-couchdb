@@ -47,6 +47,7 @@ import org.jcouchdb.db.ServerImpl;
 public class CouchDBDetector extends DaemonDetector {
 
     private static final String BIND_ADDRESS = "bindaddress";
+    private static final String PROP_VERSION = "version";
 
     private void setOpt(Map opts, String opt, String val) {
         if (opts.containsKey(opt) || //set by process                                                         
@@ -125,6 +126,14 @@ public class CouchDBDetector extends DaemonDetector {
         String hostname = config.getValue(Collector.PROP_HOSTNAME);
         int port = Integer.valueOf(config.getValue(Collector.PROP_PORT));
         Server server = new ServerImpl(hostname, port);
+
+        ConfigResponse cprops = new ConfigResponse();
+        Map response = server.get("/").getContentAsMap();
+        String version = (String)response.get(PROP_VERSION);
+        if (version != null) {
+            cprops.setValue(PROP_VERSION, version);
+        }
+        setCustomProperties(cprops);
 
         for (String dbname : server.listDatabases()) {
             ServiceResource service = createServiceResource("Database");

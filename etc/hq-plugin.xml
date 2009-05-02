@@ -90,6 +90,11 @@
               description="Process Query"/>
     </config>
 
+    <!-- inventory properties -->
+    <properties>
+      <property name="version" description="Version"/>
+    </properties>
+
     <plugin type="autoinventory"
             class="org.hyperic.hq.plugin.couchdb.CouchDBDetector"/>
 
