@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,9 +60,9 @@ public class CouchDBDetector extends DaemonDetector {
         { "couch.bindaddress", BIND_ADDRESS },
         { "couch.port", HTTPD_PORT }
     };
-    private Map opts;
+    private Map<String,String> opts;
 
-    private void setOpt(Map opts, String opt, String val) {
+    private void setOpt(Map<String,String> opts, String opt, String val) {
         if (opts.containsKey(opt) || //set by process                                                         
             (getTypeProperty(opt) != null)) //set in agent.properties                                         
         {
@@ -87,7 +86,7 @@ public class CouchDBDetector extends DaemonDetector {
             if (opt == null) {
                 continue;
             }
-            String val = (String)this.opts.get(opt);
+            String val = this.opts.get(opt);
             if (val != null) {
                 config.setValue(name, val);
             }
@@ -147,8 +146,7 @@ public class CouchDBDetector extends DaemonDetector {
         String cwd = getProcCwd(pid);
         String[] args = getProcArgs(pid);
         String[] files = null;
-        for (int i=0; i<args.length; i++) {
-            String arg = args[i];
+        for (String arg : args) {
             if (!arg.startsWith(SERVER_START)) {
                 continue;
             }
@@ -178,8 +176,8 @@ public class CouchDBDetector extends DaemonDetector {
 
         setOpt(opts, INSTALLPATH, cwd);
         StringBuilder configs = new StringBuilder();
-        for (int i=0; i<files.length; i++) {
-            String arg = xtrim(files[i], '"');
+        for (String file : files) {
+            String arg = xtrim(file, '"');
             String ini = cwd + File.separator + arg;
             if (parseIni(ini)) {
                 if (configs.length() != 0) {
@@ -195,30 +193,30 @@ public class CouchDBDetector extends DaemonDetector {
     private void parseOpts(String ini) {
         parseIni(ini);
         for (int i=0; i<ALIASES.length; i++) {
-            String value = (String)opts.remove(ALIASES[i][0]);
+            String value = opts.remove(ALIASES[i][0]);
             if (value != null) {
                 opts.put(ALIASES[i][1], value);
             }
         }
-        String home = (String)opts.get("-home");
+        String home = opts.get("-home");
         if (home != null) {
             setOpt(opts, INSTALLPATH, home);
         }
     }
 
-    protected Map getProcOpts(long pid) {
+    protected Map<String,String> getProcOpts(long pid) {
         this.opts = super.getProcOpts(pid);
         String defaultPort = getTypeProperty(Collector.PROP_PORT);
 
         setOpt(opts, INVENTORY_ID, "couchdb@%port%");
 
-        String pidfile = (String)opts.get("-pidfile");
+        String pidfile = opts.get("-pidfile");
         if ((pidfile != null) && new File(pidfile).canRead()) {
             opts.put(SigarMeasurementPlugin.PTQL_CONFIG,
                      "Pid.PidFile.eq=" + pidfile);
         }
 
-        String ini = (String)opts.get(OPT_COUCHINI);
+        String ini = opts.get(OPT_COUCHINI);
         if (ini != null) {
             parseOpts(ini);
         }
