@@ -77,17 +77,17 @@
   <server name="CouchDB">
 
     <property name="PROC_QUERY"
-              value="State.Name.sw=beam,Args.*.sw=couch_server:start()"/>
+              value="State.Name.sw=beam,Args.*.sw=couch_server:start"/>
 
     <property name="DEFAULT_CONFIG_FILE" value="/etc/couchdb/couch.ini"/>
     <property name="DEFAULT_LOG_FILE" value="/var/log/couchdb/couch.log"/>
 
     <!-- getProcOpts() -> config option mapping -->
-    <property name="hostname.opt" value="bindaddress"/>
-    <property name="port.opt" value="port"/>
+    <property name="hostname.opt" value="httpd.bind_address"/>
+    <property name="port.opt" value="httpd.port"/>
     <property name="process.query.opt" value="process.query"/>
     <property name="server.config_track.files.opt" value="-couchini"/>
-    <property name="server.log_track.files.opt" value="logfile"/>
+    <property name="server.log_track.files.opt" value="log.file"/>
 
     <!-- default sockaddr.port -->
     <property name="port" value="5984"/>
