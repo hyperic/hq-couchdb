@@ -1,0 +1,22 @@
+jcouchdb.jar
+------------
+Home: http://code.google.com/p/jcouchdb/
+License: http://www.opensource.org/licenses/bsd-license.php
+
+svenson.jar
+-----------
+Home: http://code.google.com/p/svenson/
+License: http://www.opensource.org/licenses/bsd-license.php
+
+commons-io.jar
+--------------
+Home: http://commons.apache.org/io/
+License: http://www.apache.org/licenses/LICENSE-2.0
+
+Note: Hyperic HQ agent/pdk/lib/ includes jcouchdb's other depencies:
+commons-beanutils.jar
+commons-codec.jar
+commons-httpclient.jar
+commons-logging.jar
+log4j.jar
+
