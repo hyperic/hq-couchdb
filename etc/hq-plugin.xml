@@ -109,6 +109,9 @@
     <plugin type="measurement"
             class="org.hyperic.hq.product.MeasurementPlugin"/>
 
+    <plugin type="collector"
+            class="org.hyperic.hq.plugin.couchdb.CouchDBStatsCollector"/>
+
     <plugin type="config_track"
             class="org.hyperic.hq.product.ConfigFileTrackPlugin"/>
 
@@ -120,6 +123,10 @@
             indicator="true"/>
 
     <metrics include="process"/>
+    <filter name="template"
+            value="couchdb:${sockaddr.config},path=/_stats/httpd/requests:${alias}"/>
+
+    <metric name="Httpd Requests Count" indicator="true" type="trendsup"/>
 
     <service name="Database">
       <config>
