@@ -36,43 +36,35 @@ import org.jcouchdb.db.ServerImpl;
 public class CouchDBStatsCollector extends Collector {
     private String hostname;
     private int port;
-    private String path;
+    private String path, key;
 
     protected void init() throws PluginException {
+        super.init();
         Properties props = getProperties();
         this.hostname = props.getProperty(PROP_HOSTNAME);
         this.port = Integer.valueOf(props.getProperty(PROP_PORT));
         this.path = props.getProperty(PROP_PATH);
-        setSource(this.path);
-        super.init();
-    }
-
-    private String ucfirst(String str) {
-        return
-            Character.toUpperCase(str.charAt(0)) +
-            str.substring(1);
+        this.key = props.getProperty("key");
+        setSource(this.path + "/" + this.key);
     }
 
     public void collect() {
         Server server = new ServerImpl(hostname, port);
         Map response =
             server.get(this.path).getContentAsMap();
-        String prefix = "";
-
-        for (String key : this.path.split("/")) {
-            Map map = (Map)response.get(key);
-            if (map == null) {
-                continue;
-            }
-            response = map;
-            if (key.charAt(0) != '_') {
-                prefix += ucfirst(key);
-            }
-        }
 
         if (response == null) {
             return;
         }
+
+        for (String key : this.key.split("/")) {
+            Map map = (Map)response.get(key);
+            if (map == null) {
+                continue;
+            }
+            response = map; 
+        }
+
         for (Object key : response.keySet()) {
             Object obj = response.get(key);
             Number val;
@@ -82,8 +74,7 @@ public class CouchDBStatsCollector extends Collector {
             else {
                 continue;
             }
-            setValue(prefix + ucfirst((String)key),
-                     val.doubleValue());
+            setValue((String)key, val.doubleValue());
         }
     }
 }
