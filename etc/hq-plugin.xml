@@ -123,10 +123,52 @@
             indicator="true"/>
 
     <metrics include="process"/>
-    <filter name="template"
-            value="couchdb:${sockaddr.config},path=/_stats/httpd/requests:${alias}"/>
 
-    <metric name="Httpd Requests Count" indicator="true" type="trendsup"/>
+    <filter name="template"
+            value="couchdb:${sockaddr.config},path=/_stats,key=httpd/requests:count"/>
+
+    <metric name="HTTPD Requests" indicator="true" type="trendsup"/>
+
+    <filter name="template"
+            value="couchdb:${sockaddr.config},path=/_stats,key=httpd_request_methods/${method}:count"/>
+
+    <metric method="GET" name="${method} Requests" type="trendsup" indicator="true"/>
+
+    <metric method="POST" name="${method} Requests" type="trendsup"/>
+
+    <metric method="PUT" name="${method} Requests" type="trendsup"/>
+
+    <metric method="COPY" name="${method} Requests" type="trendsup"/>
+
+    <metric method="DELETE" name="${method} Requests" type="trendsup"/>
+
+    <metric method="HEAD" name="${method} Requests" type="trendsup"/>
+
+    <filter name="template"
+            value="couchdb:${sockaddr.config},path=/_stats,key=httpd_status_codes/${code}:count"/>
+
+    <!-- OK -->
+    <metric code="200" name="${code} Responses" type="trendsup"/>
+    <!-- Created -->
+    <metric code="201" name="${code} Responses" type="trendsup"/>
+    <!-- Accepted -->
+    <metric code="202" name="${code} Responses" type="trendsup"/>
+    <!-- Not Modified -->
+    <metric code="304" name="${code} Responses" type="trendsup"/>
+    <!-- Bad Request -->
+    <metric code="400" name="${code} Responses" type="trendsup"/>
+    <!-- Not Found -->
+    <metric code="404" name="${code} Responses" type="trendsup"/>
+    <!-- Resource Not Allowed -->
+    <metric code="405" name="${code} Responses" type="trendsup"/>
+    <!-- Not Acceptable -->
+    <metric code="406" name="${code} Responses" type="trendsup"/>
+    <!-- Conflict -->
+    <metric code="409" name="${code} Responses" type="trendsup"/>
+    <!-- Precondition Failed -->
+    <metric code="412" name="${code} Responses" type="trendsup"/>
+    <!-- Internal Server Error -->
+    <metric code="500" name="${code} Responses" type="trendsup"/>
 
     <service name="Database">
       <config>
