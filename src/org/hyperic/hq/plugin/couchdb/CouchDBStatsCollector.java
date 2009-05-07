@@ -39,7 +39,6 @@ public class CouchDBStatsCollector extends Collector {
     private String path, key;
 
     protected void init() throws PluginException {
-        super.init();
         Properties props = getProperties();
         this.hostname = props.getProperty(PROP_HOSTNAME);
         this.port = Integer.valueOf(props.getProperty(PROP_PORT));

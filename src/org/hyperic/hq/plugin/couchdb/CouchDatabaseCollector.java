@@ -46,7 +46,6 @@ public class CouchDatabaseCollector extends Collector {
         this.port = Integer.valueOf(props.getProperty(PROP_PORT));
         this.dbname = props.getProperty(PROP_DBNAME);
         setSource(this.dbname);
-        super.init();
     }
 
 
